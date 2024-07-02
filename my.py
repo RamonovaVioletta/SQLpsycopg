@@ -3,6 +3,7 @@ conn = psycopg2.connect( user="postgres",
                          password="Sogma!1939",
                          database="netology")
 
+
 def drop_db(conn):
     with conn.cursor() as cur:
         cur.execute("""
@@ -99,16 +100,20 @@ def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
     with conn.cursor() as cur:
         cur.execute("""
             SELECT client.id, client.first_name, client.last_name, client.email, phone.number FROM client
-            JOIN phone ON client.id = phone.client_id
-            WHERE client.first_name = %s OR client.last_name = %s OR client.email = %s OR phone.number = %s;
+            LEFT JOIN phone ON client.id = phone.client_id
+            WHERE client.first_name = %s AND client.last_name = %s AND client.email = %s AND phone.number = %s;
             """, (first_name, last_name, email, phone))
 
 
-with psycopg2.connect(database='netology', user='postgres', password='Sogma!1939') as conn:
-    create_db(conn)
-# add_new_client(conn, 'Violetta', 'Ramonova', 'va.ramonova@sogma.ru')
-# add_phone_number(conn, 1, 928976161)
-# change_data(conn, 1,'Violetta', 'Ramonova', 'v.ramonova@mail.ru','9284976161')
-# delete_phone_number(conn,1, '9284976161')
-# delete_client(conn, 1)
-# find_client(conn, 'Violetta')
+if __name__ == "__main__":
+    with psycopg2.connect(database='netology', user='postgres', password='Sogma!1939') as conn:
+        create_db(conn)
+        drop_db(conn)
+        add_new_client(conn, 'Violetta', 'Ramonova', 'va.ramonova@sogma.ru')
+        add_phone_number(conn, 1, '928976161')
+        change_data(conn, 1, "Violetta", "Ramonova", "v.ramonova@mail.ru", "9284976161")
+        delete_phone_number(conn, 1, "9284976161")
+        delete_client(conn, 1)
+        find_client(conn, "Violetta")
+
+
